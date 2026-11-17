@@ -1,0 +1,442 @@
+name: Timetable
+description: ''
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/v1/timetable
+    metadata:
+      custom: []
+      groupName: Timetable
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'My timetable'
+      description: |-
+        Admins see every slot, lecturers the slots of their courses, students the slots of courses
+        they are enrolled in for the same term. Ordered by weekday and start time.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      academic_year:
+        custom: []
+        name: academic_year
+        description: ''
+        required: false
+        example: 2025/2026
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      semester:
+        custom: []
+        name: semester
+        description: 'odd or even.'
+        required: false
+        example: odd
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      academic_year: 2025/2026
+      semester: odd
+    bodyParameters:
+      academic_year:
+        custom: []
+        name: academic_year
+        description: 'Must not be greater than 9 characters.'
+        required: false
+        example: bngzmiy
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      semester:
+        custom: []
+        name: semester
+        description: ''
+        required: false
+        example: null
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      academic_year: bngzmiy
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/v1/courses/{course_id}/schedules'
+    metadata:
+      custom: []
+      groupName: Timetable
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: "List a course's schedule slots"
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/v1/courses/{course_id}/schedules'
+    metadata:
+      custom: []
+      groupName: Timetable
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Add a schedule slot (admin)'
+      description: 'Rejected with 422 if the room is already booked for an overlapping time in that term.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      academic_year:
+        custom: []
+        name: academic_year
+        description: 'Must match the regex /^\d{4}\/\d{4}$/.'
+        required: true
+        example: 6425/5931
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      semester:
+        custom: []
+        name: semester
+        description: ''
+        required: true
+        example: odd
+        type: string
+        enumValues:
+          - odd
+          - even
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      day_of_week:
+        custom: []
+        name: day_of_week
+        description: 'Must be between 1 and 7.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      start_time:
+        custom: []
+        name: start_time
+        description: 'Must be a valid date in the format <code>H:i</code>.'
+        required: true
+        example: '03:51'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      end_time:
+        custom: []
+        name: end_time
+        description: 'Must be a valid date in the format <code>H:i</code>. Must be a date after <code>start_time</code>.'
+        required: true
+        example: '2052-11-22'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      room:
+        custom: []
+        name: room
+        description: 'Must not be greater than 50 characters.'
+        required: true
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      academic_year: 6425/5931
+      semester: odd
+      day_of_week: 1
+      start_time: '03:51'
+      end_time: '2052-11-22'
+      room: 'n'
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+      - PATCH
+    uri: 'api/v1/schedules/{schedule_id}'
+    metadata:
+      custom: []
+      groupName: Timetable
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update a schedule slot (admin)'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      schedule_id:
+        custom: []
+        name: schedule_id
+        description: 'The ID of the schedule.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      schedule_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      academic_year:
+        custom: []
+        name: academic_year
+        description: 'Must match the regex /^\d{4}\/\d{4}$/.'
+        required: false
+        example: 6425/5931
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      semester:
+        custom: []
+        name: semester
+        description: ''
+        required: false
+        example: odd
+        type: string
+        enumValues:
+          - odd
+          - even
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      day_of_week:
+        custom: []
+        name: day_of_week
+        description: 'Must be between 1 and 7.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      start_time:
+        custom: []
+        name: start_time
+        description: 'Must be a valid date in the format <code>H:i</code>.'
+        required: false
+        example: '03:51'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      end_time:
+        custom: []
+        name: end_time
+        description: 'Must be a valid date in the format <code>H:i</code>. Must be a date after <code>start_time</code>.'
+        required: false
+        example: '2052-11-22'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      room:
+        custom: []
+        name: room
+        description: 'Must not be greater than 50 characters.'
+        required: false
+        example: 'n'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      academic_year: 6425/5931
+      semester: odd
+      day_of_week: 1
+      start_time: '03:51'
+      end_time: '2052-11-22'
+      room: 'n'
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/v1/schedules/{schedule_id}'
+    metadata:
+      custom: []
+      groupName: Timetable
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete a schedule slot (admin)'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      schedule_id:
+        custom: []
+        name: schedule_id
+        description: 'The ID of the schedule.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      schedule_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null

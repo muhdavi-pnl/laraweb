@@ -1,0 +1,64 @@
+name: Deploy
+
+# Deploys only after the CI workflow succeeded on main, or manually (e.g. to redeploy / roll back to a ref).
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref (commit SHA or tag) to deploy
+        required: false
+        default: origin/main
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment: production # configure required reviewers here for manual approval
+    steps:
+      - name: Resolve ref
+        id: ref
+        env:
+          EVENT: ${{ github.event_name }}
+          RUN_SHA: ${{ github.event.workflow_run.head_sha }}
+          INPUT_REF: ${{ inputs.ref }}
+        run: |
+          REF="$INPUT_REF"
+          [ "$EVENT" = "workflow_run" ] && REF="$RUN_SHA"
+          if ! [[ "$REF" =~ ^[A-Za-z0-9._/-]+$ ]]; then echo "Invalid ref"; exit 1; fi
+          echo "value=$REF" >> "$GITHUB_OUTPUT"
+
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Deploy over SSH
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          APP_PATH: ${{ secrets.DEPLOY_PATH }}
+          REF: ${{ steps.ref.outputs.value }}
+        run: |
+          ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=yes "$DEPLOY_USER@$HOST" \
+            "cd '$APP_PATH' && bash scripts/deploy.sh '$REF'"
+
+      - name: Smoke test
+        env:
+          APP_URL: ${{ secrets.DEPLOY_APP_URL }}
+        run: curl --fail --silent --show-error --retry 5 --retry-delay 5 --retry-all-errors "$APP_URL/up"

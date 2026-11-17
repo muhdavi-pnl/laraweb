@@ -25,3 +25,7 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+/docs/
+/tests/
+AGENTS.md
+CLAUDE.md
